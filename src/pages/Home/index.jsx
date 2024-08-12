@@ -34,7 +34,10 @@ export default function Home() {
 
     return (
         <div className='home_container'>
-            <h1>LISTA DE TAREFAS</h1>
+
+            <img src="./clock.webp" alt="Logo Poupa Tempo App" />
+
+            <h1>LOGIN</h1>
             <span>Gerencie o seu tempo de forma fácil e eficaz!</span>
 
             <form className='form' onSubmit={handleLogin}>

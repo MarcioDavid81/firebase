@@ -31,7 +31,10 @@ export default function Register() {
 
     return (
         <div className='home_container'>
-            <h1>CADASTRE-SE JÁ</h1>
+
+            <img src="./clock.webp" alt="Logo Poupa Tempo App" />
+
+            <h1>REGISTRE-SE</h1>
             <span>Crie sua conta e comece a usar agora mesmo!</span>
 
             <form className='form' onSubmit={handleRegister}>
@@ -43,7 +46,7 @@ export default function Register() {
                 />
                 <input
                     type="password"
-                    placeholder='******'
+                    placeholder='Crie uma senha...'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />

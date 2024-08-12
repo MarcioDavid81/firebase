@@ -7,6 +7,12 @@
     width: 100%;
 }
 
+.home_container img{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1.75rem;
+}
+
 .home_container h1{
     font-size: 3rem;
     margin-bottom: 0.5rem;

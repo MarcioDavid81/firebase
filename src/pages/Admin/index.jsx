@@ -45,6 +45,9 @@ export default function Admin() {
 
   return (
     <div className="admin_container">
+
+      <img src="./clock.webp" alt="Logo Poupa Tempo App" />
+
       <h1>MINHAS TAREFAS</h1>
 
       <form className='form' onSubmit={handleRegister}>

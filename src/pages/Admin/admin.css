@@ -5,6 +5,13 @@
     margin-top: 3rem;
     height: 100vh;
 }
+
+.admin_container img{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1.75rem;
+}
+
 .admin_container h1{
     font-size: 2rem;
     margin-bottom: 1rem;
