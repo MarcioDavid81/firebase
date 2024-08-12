@@ -1,0 +1,330 @@
+/* jsx */
+import { db, auth } from './firebaseConnection'
+import { doc, setDoc, collection, addDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth'
+import { useState, useEffect } from 'react'
+import './app.css'
+
+function App() {
+
+  const [titulo, setTitulo] = useState('')
+  const [autor, setAutor] = useState('')
+  const [idPost, setIdPost] = useState('')
+
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+
+  const [user, setUser] = useState(false)
+  const [userDetail, setUserDetail] = useState({})
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    async function loadPosts() {
+      const unsub = onSnapshot(collection(db, 'posts'), (snapshot) => {
+        let listaPost = [];
+        snapshot.forEach((doc) => {
+          listaPost.push({
+            id: doc.id,
+            titulo: doc.data().titulo,
+            autor: doc.data().autor
+          })
+        })
+        setPosts(listaPost)
+      })
+    }
+    loadPosts()
+  }, [])
+
+  useEffect(() => {
+    async function checkUser() {
+      onAuthStateChanged(auth, (user) => {
+        if(user) { 
+          // se tem usuário logado caia aqui e permanece logado
+          setUser(true)
+          setUserDetail({
+            uid: user.uid,
+            email: user.email
+          })
+        } else {
+          // se não tem usuário logado cai aqui
+          setUser(false)
+          setUserDetail({})
+        }
+      })
+    }
+    checkUser()
+  }, [])
+
+  async function handleAdd() {
+    // await setDoc(doc(db, 'posts', '1234'), {
+    //   titulo: titulo,
+    //   autor: autor
+    // })
+    // .then(() => {
+    //   console.log('Document successfully written!')
+    // })
+    // .catch((error) => {
+    //   console.error('Error writing document: ', error)
+    // })
+
+    await addDoc(collection(db, 'posts'), {
+      titulo: titulo,
+      autor: autor
+    })
+
+    .then(() => {
+      console.log('Document successfully written!')
+      setAutor('')
+      setTitulo('')
+    })
+    .catch((error) => {
+      console.error('Error writing document: ', error)
+    })
+  }
+
+  async function buscarPost() {
+    
+    // const postRef = doc(db, 'posts', '1234')
+
+    // await getDoc(postRef)
+
+    // .then((snapshot) => {
+    //   setAutor(snapshot.data().autor)
+    //   setTitulo(snapshot.data().titulo)
+    // })
+    // .catch(() => {
+    //   console.log('Error getting document')
+    // })
+
+    const postRef = collection(db, 'posts')
+
+    await getDocs(postRef)
+    .then((snapshot) => {
+      let lista = []
+      snapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          titulo: doc.data().titulo,
+          autor: doc.data().autor
+        })
+      })
+      setPosts(lista)
+    })
+    .catch((error) => {
+      console.log('Error ao buscar')
+    })
+
+  }
+
+  async function editPost() {
+    const postRef = doc(db, 'posts', idPost)
+
+    await updateDoc(postRef, {
+      titulo: titulo,
+      autor: autor
+    })
+
+    .then(() => {
+      alert('Post atualizado com sucesso!')
+      setAutor('')
+      setTitulo('')
+      setIdPost('')
+    })
+    .catch((error) => {
+      alert('Erro ao atualizar post')
+    })
+  }
+
+  async function excluirPost(id) {
+    const docRef = doc(db, 'posts', id)
+    await deleteDoc(docRef)
+
+    .then(() => {
+      alert('Post excluído com sucesso!')
+    })
+  }
+
+  async function novoUsuario() {
+    await createUserWithEmailAndPassword(auth, 
+    email, senha)
+    .then(() => {
+      alert('Usuário cadastrado com sucesso!')
+      setEmail('')
+      setSenha('')
+    })
+    .catch((error) => {
+      if(error.code === 'auth/weak-password') {
+        alert('Senha muito fraca')
+      } else if(error.code === 'auth/email-already-in-use') {
+        alert('Email já cadastrado')
+      }
+    })
+  }
+
+  async function logarUsuario() {
+    await signInWithEmailAndPassword(auth, email, senha)
+    .then((value) => {
+      alert('Usuário logado com sucesso!')
+
+      setUserDetail({
+        uid: value.user.uid,
+        email: value.user.email
+      })
+
+      setUser(true);
+
+      setEmail('')
+      setSenha('')
+    })
+    .catch((error) => {
+
+    })
+  }
+
+  async function logout() {
+    await signOut(auth)
+    setUser(false)
+    setUserDetail({})
+  }
+
+
+// HTML
+  return (
+    <div>
+      <h1>React JS + Firebase</h1>
+
+      {user && (
+        <div className='userLogado'>
+          <h2>Olá, você está logado!</h2>
+          <span>
+            {userDetail.email} - {userDetail.uid}
+          </span>
+          <br />
+          <button onClick={logout}>Logout</button>
+        </div>
+      )}
+
+      <div className='container'>
+        <h2>USUÁRIO</h2>
+        <label>Email</label>
+        <input
+        type='email'
+          placeholder='Digite seu email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <label>Senha</label>
+        <input
+          type='password'
+          placeholder='Digite sua senha'
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+        <br />
+        <button onClick={logarUsuario}>Login</button>
+        <button onClick={novoUsuario}>Cadastrar</button>
+      </div>
+      <br /><br /><br /><br />
+      <hr />
+
+
+      <div className='container'>
+        <h2>POSTS</h2>
+        <label>ID</label>
+        <input
+          type='text'
+          placeholder='ID do post'
+          value={idPost}
+          onChange={(e) => setIdPost(e.target.value)}
+        />
+        <label>Título</label>
+        <textarea
+          type='text'
+          placeholder='Título do post'
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)} 
+        />
+        <label>Autor</label>
+        <input
+          type='text'
+          placeholder='Autor do post'
+          value={autor}
+          onChange={(e) => setAutor(e.target.value)}
+        />
+        <button onClick={handleAdd}>
+          Cadastrar
+        </button>
+        <br />
+        <button onClick={buscarPost}>
+          Buscar Post
+        </button>
+        <br />
+        <button onClick={editPost}>
+          Atualizar Post
+        </button>
+        <br /><br />
+
+        <ul>
+          {posts.map((post) => {
+            return (
+              <li key={post.id}>
+                <strong>ID: {post.id}</strong>
+                <h3>Título: {post.titulo}</h3>
+                <p>Autor: {post.autor}</p>
+                <button onClick={() => excluirPost(post.id)}>Excluir</button>
+                <br />
+                <br />
+                <br />
+                <hr />
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+
+    </div>
+  )
+}
+
+export default App
+
+
+/* css */
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+}
+h1{
+    text-decoration: underline;
+}
+
+.userLogado{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: blueviolet;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+
+    button{
+        background-color: white;
+        color: blueviolet;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &:hover{
+            background-color: blueviolet;
+            box-shadow: 0 0 5px 0 black;
+            color: white;
+        }
+    }
+}
