@@ -69,3 +69,27 @@
     background-color: rgba(219, 38, 41, 0.75);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
+
+/*Responsividade*/
+
+@media (max-width: 768px){
+    .admin_container{
+        margin-top: 1rem;
+    }
+    .list{
+        padding: 10px 6px;
+    }
+    .list h2{
+        font-size: 1.25rem;
+    }
+    .list p{
+        font-size: 0.9rem;
+    }
+    .list button{
+        padding: 0.25rem 0.75rem;
+    }
+    .btn_logout{
+        bottom: 3%;
+        left: 3%;
+    }
+}
