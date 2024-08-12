@@ -24,7 +24,7 @@
     max-width: 500px;
     display: flex;
     flex-direction: column;
-    background-color: rgba(18, 18, 18, 0.38);
+    background-color: #1d1d2c;
     border-radius: 5px;
     margin-bottom: 0.75rem;
     justify-content:center;
@@ -48,9 +48,12 @@
     cursor: pointer;
     transition: all 0.3s;
 }
-
+.list button.btn_edit:hover{
+    background-color: #000;
+    color: #fff;
+}
 .list button.btn_delete{
-    background-color: transparent;
+    background-color: #000;
     color: #ffcc23;
 }
 
@@ -60,7 +63,7 @@
 }
 
 .btn_logout{
-    position: absolute;
+    position: fixed;
     bottom: 6%;
     left: 6%;
     height: 4rem;

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { auth } from '../../firebaseConnection'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function Register() {
 
@@ -17,13 +18,13 @@ export default function Register() {
             await createUserWithEmailAndPassword(auth, email, password)
                 .then(() => {
                     navigate('/admin', { replace: true });
-                    alert('Cadastro realizado com sucesso!');
+                    toast.success('Cadastro efetuado com sucesso!');
                 })
                 .catch(() => {
-                    alert('Email já cadastrado!');
+                    toast.warn('Email já cadastrado!');
         })
         } else {
-            alert('Preencha todos os campos!');
+            toast.warn('Preencha todos os campos!');
         }
 
         

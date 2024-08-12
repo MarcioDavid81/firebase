@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { auth } from '../../firebaseConnection';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'
 
 export default function Home() {
 
@@ -18,15 +19,15 @@ export default function Home() {
             await signInWithEmailAndPassword(auth, email, password)
                 .then(() => {
                     navigate('/admin', { replace: true });
-                    alert('Logado com sucesso!');
+                    toast.success('Login efetuado com sucesso!');
                 })
                 .catch(() => {
-                    alert('Email ou senha incorretos!');
+                    toast.alert('Email ou senha incorretos!');
                     setEmail('');
                     setPassword('');
                 });
         } else {
-            alert('Preencha todos os campos!');
+            toast.warn('Preencha todos os campos!');
         }
 
         
